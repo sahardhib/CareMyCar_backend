@@ -191,11 +191,19 @@ public function authenticate(Request $request)
         ]);
     }
 }
-    public function getUsers()
-    {
-        $users = User::all();
-        return response()->json(['data' => $users], 200);
+public function getUsers()
+{
+    $users = User::where('role', 'user')->get();
+
+    // Ajouter le chemin complet de l'image de profil à chaque utilisateur
+    foreach ($users as $user) {
+        $user->profile_image_path = asset('storage/photo/' . $user->profile_image);
     }
+
+    return response()->json(['data' => $users], 200);
+}
+
+
 
     public function deleteUser($id)
     {
