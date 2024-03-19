@@ -53,37 +53,11 @@ class VoitureController extends Controller
             ]);
 
             // Enregistrer l'image dans le stockage public
-            Storage::disk('public')->put($imageName, file_get_contents($request->image));
+            $request->image->storeAs('photos', $imageName, 'public');
 
             return response()->json([
                 'message' => "Véhicule ajouté avec succès",
                 'voiture' => $voiture,
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => "Une erreur s'est produite!"
-            ], 500);
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        try {
-            // Récupérer une voiture spécifique par son ID
-            $voiture = Voiture::find($id);
-
-            if (!$voiture) {
-                return response()->json([
-                    'message' => 'La voiture n\'existe pas!'
-                ], 404);
-            }
-
-            return response()->json([
-                'voiture' => $voiture
             ], 200);
 
         } catch (\Exception $e) {
@@ -121,22 +95,17 @@ class VoitureController extends Controller
 
             // Vérifier si une nouvelle image est fournie
             if ($request->image) {
-                // Stockage public
-                $storage = Storage::disk('public');
-
                 // Supprimer l'ancienne image si elle existe
-                if ($storage->exists($voiture->image)) {
-                    $storage->delete($voiture->image);
-                }
+                Storage::disk('public')->delete('photos/' . $voiture->image);
 
                 // Générer un nouveau nom d'image
                 $imageName = Str::random(32) . "." . $request->image->getClientOriginalExtension();
 
-                // Définir le nouveau nom d'image dans le modèle de la voiture
-                $voiture->update(['image' => $imageName]);
+                // Déplacer la nouvelle image vers le dossier de stockage public
+                $request->image->storeAs('photos', $imageName, 'public');
 
-                // Enregistrer la nouvelle image dans le dossier public
-                $storage->put($imageName, file_get_contents($request->image));
+                // Mettre à jour le nom de l'image dans la base de données
+                $voiture->update(['image' => $imageName]);
             }
 
             return response()->json([
@@ -167,7 +136,7 @@ class VoitureController extends Controller
             }
 
             // Supprimer l'image associée du stockage
-            Storage::disk('public')->delete($voiture->image);
+            Storage::disk('public')->delete('photos/' . $voiture->image);
 
             // Supprimer la voiture de la base de données
             $voiture->delete();

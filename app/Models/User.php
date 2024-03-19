@@ -50,6 +50,9 @@ class User extends Authenticatable
         
     ];
 
- 
+    public function voitures()
+    {
+        return $this->hasMany(Voiture::class);
+    }
 
 }
