@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\VoitureController;
+use App\Http\Controllers\API\ServicerController;
+
 use App\Http\Controllers\API\AdminController;
 
 /*
@@ -48,5 +50,12 @@ Route::post('voitures', [VoitureController::class, 'store']);
 Route::put('voituresupdate/{id}', [VoitureController::class, 'update']);
 Route::delete('voituresdelete/{id}', [VoitureController::class, 'destroy']);
 
+
+
+Route::get('services', [ServicerController::class, 'index']);
+Route::get('services/{id}', [ServicerController::class, 'show']);
+Route::post('addnew', [ServicerController::class, 'store']);
+Route::put('serviceupdate/{id}', [ServicerController::class, 'update']);
+Route::delete('servicedelete/{id}', [ServicerController::class, 'destroy']);
 
 
