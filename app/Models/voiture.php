@@ -17,7 +17,13 @@ class voiture extends Model
         'image',
         'date_de_vignette',
         'date_d_assurance',
+        'user_id',
          ];
+
+         public function user()
+         {
+             return $this->belongsTo(User::class);
+         }
 
 
 }

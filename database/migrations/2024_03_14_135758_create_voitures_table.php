@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('voitures', function (Blueprint $table) {
            
-            $table->id();// Add this line in the 'up' method
+            $table->id();
             $table->string('marque');
             $table->string('modele');
             $table->string('type');
@@ -32,5 +32,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('voitures');
+     
     }
 };

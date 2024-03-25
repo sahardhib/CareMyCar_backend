@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Route::get('users','App\Http\Controllers\APIcontroller@getUsers');  // get users data from database
 Route::namespace ('App\Http\Controllers\API')->group(function(){
+   
    Route::post('register', 'APIController@create'); 
 
    Route ::post('login', 'APIController@authenticate');  
@@ -43,12 +44,13 @@ Route::post('admin-reset-password', [AdminController::class, 'sendResetEmail']);
 
 
 });     
-
-Route::get('voitures', [VoitureController::class, 'index']);
-Route::get('voitures/{id}', [VoitureController::class, 'show']);
-Route::post('voitures', [VoitureController::class, 'store']);
-Route::put('voituresupdate/{id}', [VoitureController::class, 'update']);
-Route::delete('voituresdelete/{id}', [VoitureController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('voitures', [VoitureController::class, 'index']);
+    Route::get('voitures/{id}', [VoitureController::class, 'show']);
+    Route::post('voitures', [VoitureController::class, 'store']);
+    Route::put('voitures/{id}', [VoitureController::class, 'update']);
+    Route::delete('voitures/{id}', [VoitureController::class, 'destroy']);
+});
 
 
 
