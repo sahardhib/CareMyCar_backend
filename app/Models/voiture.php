@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class voiture extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'marque',
-        'modele',
-        'type',
-        'matricule',
-        'VIN',
-        'image',
-        'date_de_vignette',
-        'date_d_assurance',
-         ];
 
+    protected $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function voitures()
+    {
+        return $this->hasMany(VisitModel::class);
+    }
 
 }

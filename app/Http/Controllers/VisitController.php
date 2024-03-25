@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\VisitModel;
-
-use Illuminate\Http\Request ;
+use Illuminate\Http\Request;
 
 class VisitController extends Controller
 {
@@ -20,24 +19,14 @@ class VisitController extends Controller
     {
         $dates = VisitModel::where('status', 1)->pluck('date')->toArray();
 
+        $myVisits = VisitModel::with('voiture')->whereHas('voiture', function ($query) use ($id) {
+            $query->where('user_id', $id);
+        })->with('voiture:matricule,id')->get();
 
-        $myVisits = VisitModel::with('voiture')
-            ->whereHas('voiture', function ($query) use ($id) {
-                $query->where('user_id', $id);
-            })
-            ->with('voiture:matricule,id')->get();
-            return response()->json([
-        'visits' => $myVisits,
-        'dates' => $dates,
-    ], 200);;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-
+        return response()->json([
+            'visits' => $myVisits,
+            'dates' => $dates,
+        ], 200);
     }
 
     /**
@@ -45,22 +34,19 @@ class VisitController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
-
             $visit = VisitModel::create([
                 'voiture_id' => $request->car_id,
                 'date' => $request->date,
                 'status' => 0,
                 'mileage' => $request->mileage,
+                'selected_services' => $request->selected_services, // Sauvegarde les services sélectionnés
             ]);
-
 
             return response()->json([
                 'message' => "Rendez-vous ajouté avec succès",
                 'visit' => $visit,
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => "Une erreur s'est produite!",
@@ -70,27 +56,10 @@ class VisitController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
-       
         try {
             // Récupérer la visite par son ID
             $visit = VisitModel::find($id);
@@ -106,15 +75,13 @@ class VisitController extends Controller
                 'mileage' => $request->mileage,
                 'date' => $request->date,
                 'voiture_id' => $request->car_id,
-
+                'selected_services' => $request->selected_services, // Met à jour les services sélectionnés
             ]);
-
 
             return response()->json([
                 'message' => 'visit modifiée avec succès',
                 'visit' => $visit,
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => "Une erreur s'est produite!",
@@ -122,7 +89,6 @@ class VisitController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -140,6 +106,8 @@ class VisitController extends Controller
         return response()->json([
             'message' => 'visite supprimée avec succès'
         ], 200);
-
     }
 }
+
+
+    

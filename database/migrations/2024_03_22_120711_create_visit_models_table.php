@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date("date");
             $table->integer("status");
             $table->float("mileage");
+            $table->String('selected_services')->nullable();
             $table->timestamps();
         });
     }

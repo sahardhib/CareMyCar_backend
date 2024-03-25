@@ -45,7 +45,7 @@ Route::post('admin-reset-password', [AdminController::class, 'sendResetEmail']);
 
 
 });     
-
+Route::get('mes_voitures/{id}', [VoitureController::class, 'index']);
 Route::get('voitures', [VoitureController::class, 'index']);
 Route::get('voitures/{id}', [VoitureController::class, 'show']);
 Route::post('voitures', [VoitureController::class, 'store']);
@@ -60,7 +60,7 @@ Route::post('addnew', [ServicerController::class, 'store']);
 Route::put('serviceupdate/{id}', [ServicerController::class, 'update']);
 Route::delete('servicedelete/{id}', [ServicerController::class, 'destroy']);
 
-// apis by Fathi
+
 Route::get('/my_visits/{id}', [VisitController::class, 'getMyVisits']);
 Route::post('/add_visit', [VisitController::class, 'store']);
 Route::delete('/delete_visit/{id}', [VisitController::class, 'destroy']);

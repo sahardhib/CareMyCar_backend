@@ -13,4 +13,6 @@ class VisitModel extends Model
     {
         return $this->belongsTo(voiture::class);
     }
+
+    
 }
