@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\VisitModel;
-use Illuminate\Http\Request;
+
+use Illuminate\Http\Request ;
 
 class VisitController extends Controller
 {
@@ -17,10 +18,18 @@ class VisitController extends Controller
 
     public function getMyVisits(string $id)
     {
-        $myVisits = VisitModel::whereHas('voiture', function ($query) use ($id) {
-            $query->where('user_id', $id);
-        })->get();
-        return $myVisits;
+        $dates = VisitModel::where('status', 1)->pluck('date')->toArray();
+
+
+        $myVisits = VisitModel::with('voiture')
+            ->whereHas('voiture', function ($query) use ($id) {
+                $query->where('user_id', $id);
+            })
+            ->with('voiture:matricule,id')->get();
+            return response()->json([
+        'visits' => $myVisits,
+        'dates' => $dates,
+    ], 200);;
     }
 
     /**
@@ -36,12 +45,13 @@ class VisitController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
 
             $visit = VisitModel::create([
-                'voiture_id' => $request->voiture_id,
+                'voiture_id' => $request->car_id,
                 'date' => $request->date,
-                'status' => $request->status,
+                'status' => 0,
                 'mileage' => $request->mileage,
             ]);
 
@@ -53,7 +63,8 @@ class VisitController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'message' => "Une erreur s'est produite!"
+                'message' => "Une erreur s'est produite!",
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -77,16 +88,58 @@ class VisitController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+       
+        try {
+            // Récupérer la visite par son ID
+            $visit = VisitModel::find($id);
+
+            if (!$visit) {
+                return response()->json([
+                    'message' => 'La visite n\'existe pas'
+                ], 404);
+            }
+
+            // Mettre à jour les propriétés de la visite avec les nouvelles valeurs
+            $visit->update([
+                'mileage' => $request->mileage,
+                'date' => $request->date,
+                'voiture_id' => $request->car_id,
+
+            ]);
+
+
+            return response()->json([
+                'message' => 'visit modifiée avec succès',
+                'visit' => $visit,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => "Une erreur s'est produite!",
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $visit = VisitModel::find($id);
+        if (!$visit) {
+            return response()->json([
+                'message' => 'Le visite n\'existe pas'
+            ], 404);
+        }
+        $visit->delete();
+
+        return response()->json([
+            'message' => 'visite supprimée avec succès'
+        ], 200);
+
     }
 }

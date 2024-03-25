@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\APIController;
+use App\Http\Controllers\VisitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\VoitureController;
@@ -24,9 +26,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Route::get('users','App\Http\Controllers\APIcontroller@getUsers');  // get users data from database
 Route::namespace ('App\Http\Controllers\API')->group(function(){
-   Route::post('register', 'APIController@create'); 
+   Route::post('register', 'APIController@create');
 
-   Route ::post('login', 'APIController@authenticate');  
+   Route ::post('login', 'APIController@authenticate');
 
    Route :: post('update-user' , 'APIController@updateUser');
    Route::post('upload-photo', 'APIController@uploadPhoto');
@@ -34,7 +36,7 @@ Route::namespace ('App\Http\Controllers\API')->group(function(){
    Route::get('/get-users','APIController@getUsers');
    Route::delete('delete-user/{id}', 'APIController@deleteUser');
 
-   
+
 
 Route::post('admin-register', [AdminController::class, 'create']);
 Route::post('admin-login', [AdminController::class, 'authenticate']);
@@ -42,9 +44,9 @@ Route::post('admin-update-user', [AdminController::class, 'updateUser']);
 Route::post('admin-reset-password', [AdminController::class, 'sendResetEmail']);
 
 
-});     
+});
 
-Route::get('voitures', [VoitureController::class, 'index']);
+Route::get('mes_voitures/{id}', [VoitureController::class, 'index']);
 Route::get('voitures/{id}', [VoitureController::class, 'show']);
 Route::post('voitures', [VoitureController::class, 'store']);
 Route::put('voituresupdate/{id}', [VoitureController::class, 'update']);
@@ -58,4 +60,9 @@ Route::post('addnew', [ServicerController::class, 'store']);
 Route::put('serviceupdate/{id}', [ServicerController::class, 'update']);
 Route::delete('servicedelete/{id}', [ServicerController::class, 'destroy']);
 
+// apis by Fathi
+Route::get('/my_visits/{id}', [VisitController::class, 'getMyVisits']);
+Route::post('/add_visit', [VisitController::class, 'store']);
+Route::delete('/delete_visit/{id}', [VisitController::class, 'destroy']);
+Route::put('/update_visit/{id}', [VisitController::class, 'update']);
 
