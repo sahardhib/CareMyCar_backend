@@ -14,11 +14,11 @@ class VoitureController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(string $id)
     {
         try {
             // Récupérer toutes les voitures
-            $voitures = Voiture::all();
+            $voitures = Voiture::where("user_id",$id)->get();
 
             return response()->json([
                 'voitures' => $voitures
@@ -30,6 +30,7 @@ class VoitureController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -43,6 +44,7 @@ class VoitureController extends Controller
             // Créer une nouvelle voiture dans la base de données
             $voiture = Voiture::create([
                 'marque' => $request->marque,
+                'user_id' => $request->user_id,
                 'modele' => $request->modele,
                 'type' => $request->type,
                 'matricule' => $request->matricule,
@@ -62,7 +64,8 @@ class VoitureController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'message' => "Une erreur s'est produite!"
+                'message' => "Une erreur s'est produite!",
+                'data' => $e->getMessage()
             ], 500);
         }
     }
